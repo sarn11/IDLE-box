@@ -1,4 +1,4 @@
-package com.idlealert;
+package com.idlebox;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
@@ -6,13 +6,13 @@ import net.runelite.client.config.ConfigItem;
 
 import java.awt.Color;
 
-@ConfigGroup("idlealert")
-public interface IdleAlertConfig extends Config
+@ConfigGroup("idlebox")
+public interface IdleBoxConfig extends Config
 {
 	@ConfigItem(
 		keyName = "idleSeconds",
 		name = "Segundos idle",
-		description = "Segundos sin ninguna actividad (input, animación, interacción, movimiento o XP, según la opción de abajo) antes de mostrar la alerta",
+		description = "Segundos sin animación, interacción, movimiento ni XP antes de mostrar el indicador",
 		position = 1
 	)
 	default int idleSeconds()
@@ -60,17 +60,6 @@ public interface IdleAlertConfig extends Config
 		position = 5
 	)
 	default boolean showInfoBox()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = "considerGameActivity",
-		name = "Contar actividad del personaje",
-		description = "Si está activo, no se considera idle mientras el personaje está animando (pescando, talando, minando...), interactuando, moviéndose o ganando XP, aunque no toques teclado/ratón. Si lo desactivas, vuelve a mirar solo input físico.",
-		position = 6
-	)
-	default boolean considerGameActivity()
 	{
 		return true;
 	}

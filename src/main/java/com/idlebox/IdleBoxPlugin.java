@@ -1,4 +1,4 @@
-package com.idlealert;
+package com.idlebox;
 
 import com.google.inject.Provides;
 import net.runelite.api.Client;
@@ -22,11 +22,11 @@ import java.util.EnumMap;
 import java.util.Map;
 
 @PluginDescriptor(
-	name = "Idle Alert",
-	description = "Muestra una alerta visual cuando llevas idle X segundos, teniendo en cuenta animacion/XP/interaccion, no solo input",
-	tags = {"idle", "afk", "alert", "notification", "overlay"}
+	name = "Idle Box",
+	description = "Muestra en pantalla una caja de color y/o un InfoBox cuando el personaje lleva X segundos sin animacion, interaccion, movimiento ni XP",
+	tags = {"idle", "afk", "indicator", "overlay", "status"}
 )
-public class IdleAlertPlugin extends Plugin
+public class IdleBoxPlugin extends Plugin
 {
 	// RuneLite corre a 0.6 segundos por game tick
 	private static final double SECONDS_PER_TICK = 0.6;
@@ -35,19 +35,19 @@ public class IdleAlertPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private IdleAlertConfig config;
+	private IdleBoxConfig config;
 
 	@Inject
 	private OverlayManager overlayManager;
 
 	@Inject
-	private IdleAlertOverlay overlay;
+	private IdleBoxOverlay overlay;
 
 	@Inject
 	private InfoBoxManager infoBoxManager;
 
 	private boolean idle = false;
-	private IdleInfoBox infoBox;
+	private IdleBoxInfoBox infoBox;
 
 	// Ultimo game tick en el que hubo CUALQUIER senal de actividad
 	private int lastActivityTick;
@@ -57,9 +57,9 @@ public class IdleAlertPlugin extends Plugin
 	private boolean xpGainedThisTick;
 
 	@Provides
-	IdleAlertConfig provideConfig(ConfigManager configManager)
+	IdleBoxConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(IdleAlertConfig.class);
+		return configManager.getConfig(IdleBoxConfig.class);
 	}
 
 	@Override
@@ -94,23 +94,20 @@ public class IdleAlertPlugin extends Plugin
 	public void onGameTick(GameTick event)
 	{
 		int currentTick = client.getTickCount();
-		boolean activeThisTick = hadPhysicalInputThisTick();
+		boolean activeThisTick = false;
 
-		if (config.considerGameActivity())
+		Player local = client.getLocalPlayer();
+
+		if (local != null)
 		{
-			Player local = client.getLocalPlayer();
+			boolean animating = local.getAnimation() != -1;
+			boolean interacting = local.getInteracting() != null;
 
-			if (local != null)
-			{
-				boolean animating = local.getAnimation() != -1;
-				boolean interacting = local.getInteracting() != null;
+			WorldPoint currentLocation = local.getWorldLocation();
+			boolean moved = lastLocation != null && !lastLocation.equals(currentLocation);
+			lastLocation = currentLocation;
 
-				WorldPoint currentLocation = local.getWorldLocation();
-				boolean moved = lastLocation != null && !lastLocation.equals(currentLocation);
-				lastLocation = currentLocation;
-
-				activeThisTick = activeThisTick || animating || interacting || moved || xpGainedThisTick;
-			}
+			activeThisTick = animating || interacting || moved || xpGainedThisTick;
 		}
 
 		xpGainedThisTick = false;
@@ -140,13 +137,6 @@ public class IdleAlertPlugin extends Plugin
 		}
 	}
 
-	private boolean hadPhysicalInputThisTick()
-	{
-		// Los contadores de idle de teclado/raton se ponen a 0 justo en
-		// el tick en el que hay input.
-		return client.getKeyboardIdleTicks() == 0 || client.getMouseIdleTicks() == 0;
-	}
-
 	public boolean isIdle()
 	{
 		return idle;
@@ -159,7 +149,7 @@ public class IdleAlertPlugin extends Plugin
 			return;
 		}
 
-		infoBox = new IdleInfoBox(createIcon(), this);
+		infoBox = new IdleBoxInfoBox(createIcon(), this);
 		infoBoxManager.addInfoBox(infoBox);
 	}
 

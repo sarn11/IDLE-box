@@ -1,13 +1,13 @@
-package com.idlealert;
+package com.idlebox;
 
 import net.runelite.client.ui.overlay.infobox.InfoBox;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-public class IdleInfoBox extends InfoBox
+public class IdleBoxInfoBox extends InfoBox
 {
-	IdleInfoBox(BufferedImage image, IdleAlertPlugin plugin)
+	IdleBoxInfoBox(BufferedImage image, IdleBoxPlugin plugin)
 	{
 		super(image, plugin);
 	}

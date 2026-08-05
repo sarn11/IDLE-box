@@ -1,4 +1,4 @@
-package com.idlealert;
+package com.idlebox;
 
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -8,18 +8,18 @@ import javax.inject.Inject;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 
-public class IdleAlertOverlay extends Overlay
+public class IdleBoxOverlay extends Overlay
 {
-	private final IdleAlertPlugin plugin;
-	private final IdleAlertConfig config;
+	private final IdleBoxPlugin plugin;
+	private final IdleBoxConfig config;
 
 	@Inject
-	private IdleAlertOverlay(IdleAlertPlugin plugin, IdleAlertConfig config)
+	private IdleBoxOverlay(IdleBoxPlugin plugin, IdleBoxConfig config)
 	{
 		this.plugin = plugin;
 		this.config = config;
 		setPosition(OverlayPosition.TOP_CENTER);
-		setLayer(OverlayLayer.ABOVE_SCENE);
+		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 	}
 
 	@Override
