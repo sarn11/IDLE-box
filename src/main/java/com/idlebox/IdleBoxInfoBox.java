@@ -27,6 +27,6 @@ public class IdleBoxInfoBox extends InfoBox
 	@Override
 	public String getTooltip()
 	{
-		return "Llevas idle sin actividad";
+		return "You've been idle without activity";
 	}
 }

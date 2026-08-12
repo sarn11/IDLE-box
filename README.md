@@ -1,122 +1,119 @@
-# Idle Box (plugin de RuneLite)
+# Idle Box (RuneLite plugin)
 
-Muestra en pantalla un indicador visual cuando el **personaje** lleva más
-de X segundos sin actividad en el juego: un cuadrado de color y/o un
-InfoBox (icono + texto "IDLE") en la barra lateral. Ambos son
-configurables desde las opciones del plugin (segundos, color, tamaño, y
-si quieres uno, el otro o los dos). No es un sistema de alertas/
-notificaciones, es solo un indicador de estado en pantalla.
+Shows an on-screen visual indicator when your **character** has been idle
+for more than X seconds: a colored square and/or an InfoBox (icon + "IDLE"
+text) in the sidebar. Both are configurable from the plugin's settings
+(seconds, color, size, and whether you want one, the other, or both). It's
+not an alert/notification system, just an on-screen status indicator.
 
-## Cómo funciona
+## How it works
 
-Deliberadamente **no mira teclado ni ratón**: solo actividad del
-personaje dentro del juego. Puedes tener el ratón quieto encima de la
-ventana y el plugin seguirá sin marcar idle mientras el personaje siga
-haciendo algo. Se marca `idle = true` cuando **ninguna** de estas
-señales ha ocurrido durante el umbral configurado:
+It deliberately **ignores keyboard and mouse**: only in-game character
+activity counts. You can have the mouse sitting still over the window and
+the plugin will keep it from being marked idle as long as the character is
+still doing something. `idle` is set to `true` when **none** of these
+signals have occurred during the configured threshold:
 
-| Señal | Cómo se detecta | Cubre |
+| Signal | How it's detected | Covers |
 |---|---|---|
-| Animación | `player.getAnimation() != -1` | Pesca, tala, minería, combate cuerpo a cuerpo, cocinar, etc. |
-| Interacción | `player.getInteracting() != null` | Combate (incluidos los huecos entre golpes), comerciar, seguir a alguien |
-| XP ganada | Se compara la XP de cada skill tick a tick (`StatChanged`) | Red de seguridad para huecos de animación (p.ej. esperando a que pique un pez) |
-| Movimiento | Cambia el `WorldPoint` del jugador respecto al tick anterior | Viajes largos iniciados con un solo click |
+| Animation | `player.getAnimation() != -1` | Fishing, woodcutting, mining, melee combat, cooking, etc. |
+| Interaction | `player.getInteracting() != null` | Combat (including the gaps between hits), trading, following someone |
+| XP gained | Each skill's XP is compared tick to tick (`StatChanged`) | Safety net for animation gaps (e.g. waiting for a fish to bite) |
+| Movement | The player's `WorldPoint` changes from the previous tick | Long journeys started with a single click |
 
-Cada game tick (0.6s) se comprueba si hubo alguna de estas señales; si
-sí, se guarda ese tick como `lastActivityTick`. En cuanto pasan
-`segundos configurados / 0.6` ticks sin ninguna señal, aparece el
-indicador. En cuanto vuelve a haber cualquier señal, desaparece.
+Every game tick (0.6s) it checks whether any of these signals occurred; if
+so, that tick is stored as `lastActivityTick`. Once `configured seconds /
+0.6` ticks pass without any signal, the indicator appears. As soon as any
+signal happens again, it disappears.
 
-Este proyecto sigue la estructura oficial de
-[`runelite/example-plugin`](https://github.com/runelite/example-plugin), la
-plantilla recomendada por el
-[Plugin Hub](https://github.com/runelite/plugin-hub) de RuneLite.
+This project follows the official structure of
+[`runelite/example-plugin`](https://github.com/runelite/example-plugin), the
+template recommended by RuneLite's
+[Plugin Hub](https://github.com/runelite/plugin-hub).
 
-## Estructura
+## Structure
 
 ```
 Idle-box/
-├── build.gradle                    # dependencias, compilación y tarea `run` para probarlo
-├── settings.gradle                 # nombre del proyecto Gradle
-├── runelite-plugin.properties      # metadatos del plugin (nombre, autor, tags...)
-├── icon.png                        # icono para el listado del Plugin Hub (48x48)
-├── run-dev.sh                      # atajo para lanzar `./gradlew run` con el JDK correcto
-├── gradlew / gradlew.bat           # wrapper de Gradle (no requiere instalación previa)
-├── gradle/wrapper/                 # binarios del wrapper
-├── AGENTS.md / CLAUDE.md           # guía para agentes de IA que trabajen en este repo
-├── .editorconfig                   # estilo de código
+├── build.gradle                    # dependencies, compilation and the `run` task to test it
+├── settings.gradle                 # Gradle project name
+├── runelite-plugin.properties      # plugin metadata (name, author, tags...)
+├── icon.png                        # icon for the Plugin Hub listing (48x48)
+├── run-dev.sh                      # shortcut to launch `./gradlew run` with the right JDK
+├── gradlew / gradlew.bat           # Gradle wrapper (no prior installation required)
+├── gradle/wrapper/                 # wrapper binaries
+├── .editorconfig                   # code style
 ├── .gitignore
-├── LICENSE                         # BSD 2-Clause, la que recomienda el Plugin Hub
+├── LICENSE                         # BSD 2-Clause, the one recommended by the Plugin Hub
 ├── src/main/java/com/idlebox/
-│   ├── IdleBoxPlugin.java          # lógica principal (detecta idle)
-│   ├── IdleBoxConfig.java          # opciones configurables
-│   ├── IdleBoxOverlay.java         # dibuja el cuadrado
-│   └── IdleBoxInfoBox.java         # el InfoBox lateral
+│   ├── IdleBoxPlugin.java          # main logic (detects idle)
+│   ├── IdleBoxConfig.java          # configurable options
+│   ├── IdleBoxOverlay.java         # draws the square
+│   └── IdleBoxInfoBox.java         # the sidebar InfoBox
 └── src/test/java/com/idlebox/
-    └── IdleBoxPluginTest.java      # punto de entrada para `./gradlew run`
+    └── IdleBoxPluginTest.java      # entry point for `./gradlew run`
 ```
 
-## Cómo probarlo (entorno de desarrollo)
+## How to test it (development environment)
 
-Este proyecto usa el mismo mecanismo que la plantilla oficial de plugins
-externos: el `client` de RuneLite como dependencia de test, más una clase
-`IdleBoxPluginTest` que registra el plugin con
-`ExternalPluginManager.loadBuiltin(...)` antes de arrancar
-`RuneLite.main(...)`. Así el cliente completo arranca con "Idle Box" ya
-cargado, sin depender de convenciones de paquete ni de dejar jars sueltos
-en carpetas de configuración.
+This project uses the same mechanism as the official external plugin
+template: RuneLite's `client` as a test dependency, plus an
+`IdleBoxPluginTest` class that registers the plugin with
+`ExternalPluginManager.loadBuiltin(...)` before starting `RuneLite.main(...)`.
+This way the full client starts up with "Idle Box" already loaded, without
+relying on package naming conventions or leaving loose jars in config
+folders.
 
-1. Requisitos: JDK 11 (o superior; `build.gradle` compila con
+1. Requirements: JDK 11 (or newer; `build.gradle` compiles with
    `options.release.set(11)`).
 
-2. Lanza el cliente en modo desarrollador:
+2. Launch the client in developer mode:
    ```bash
    ./run-dev.sh
    ```
-   o directamente:
+   or directly:
    ```bash
    ./gradlew run
    ```
-   La tarea `run` de `build.gradle` ejecuta `IdleBoxPluginTest` (classpath
-   de test, que incluye el `client` de RuneLite y las clases de este
-   plugin) con `-ea` (obligatorio: RuneLite aborta con `AssertionError` en
-   `--developer-mode` si las aserciones no están activas) y los argumentos
+   The `run` task in `build.gradle` runs `IdleBoxPluginTest` (test
+   classpath, which includes RuneLite's `client` and this plugin's classes)
+   with `-ea` (required: RuneLite aborts with `AssertionError` in
+   `--developer-mode` if assertions aren't enabled) and the arguments
    `--developer-mode --debug`.
 
-3. Para iniciar sesión en el cliente de desarrollo necesitas una cuenta
-   Jagex; sigue la guía oficial
-   [Using Jagex Accounts](https://github.com/runelite/runelite/wiki/Using-Jagex-Accounts).
+3. To log into the development client you need a Jagex account; follow the
+   official
+   [Using Jagex Accounts](https://github.com/runelite/runelite/wiki/Using-Jagex-Accounts)
+   guide.
 
-4. Una vez abierto, activa "Idle Box" desde el panel lateral de plugins y
-   ajusta segundos, colores y el resto de opciones desde su icono de
-   engranaje.
+4. Once open, enable "Idle Box" from the plugin sidebar and adjust seconds,
+   colors and the rest of the options from its gear icon.
 
-## Publicarlo en el Plugin Hub
+## Publishing to the Plugin Hub
 
-Si tu idea es solo usarlo tú, con el modo desarrollador ya te vale. Si
-quieres que llegue al Plugin Hub oficial
-([`runelite/plugin-hub`](https://github.com/runelite/plugin-hub)), el
-proceso resumido es:
+If you just want to use it yourself, developer mode is all you need. If you
+want it to land on the official Plugin Hub
+([`runelite/plugin-hub`](https://github.com/runelite/plugin-hub)), the
+short version is:
 
-1. Sube este repositorio a GitHub (público).
-2. Haz fork de [`runelite/plugin-hub`](https://github.com/runelite/plugin-hub)
-   y añade un fichero en `plugins/` con:
+1. Push this repository to GitHub (public).
+2. Fork [`runelite/plugin-hub`](https://github.com/runelite/plugin-hub) and
+   add a file under `plugins/` with:
    ```
-   repository=https://github.com/<tu-usuario>/<tu-repo>.git
-   commit=<hash del commit>
+   repository=https://github.com/<your-username>/<your-repo>.git
+   commit=<commit hash>
    ```
-3. Abre un PR contra `runelite/plugin-hub` con ese fichero. Un CI comprueba
-   que el build pase y el equipo de RuneLite revisa el plugin antes de
-   fusionarlo.
+3. Open a PR against `runelite/plugin-hub` with that file. CI checks that
+   the build passes and the RuneLite team reviews the plugin before merging.
 
-Instrucciones completas en el README del Plugin Hub.
+Full instructions in the Plugin Hub's README.
 
-## Personalización rápida
+## Quick customization
 
-- Cambiar posición del cuadrado: en `IdleBoxOverlay`, la línea
-  `setPosition(OverlayPosition.TOP_CENTER)` — puedes usar
-  `TOP_LEFT`, `BOTTOM_RIGHT`, etc.
-- Que parpadee en vez de ser fijo: en `render()` puedes alternar el
-  color según `System.currentTimeMillis() % 1000 < 500`.
-- Detectar solo inactividad de ratón (no teclado): usa
-  `client.getMouseIdleTicks()` directamente en vez de las dos señales.
+- Change the square's position: in `IdleBoxOverlay`, the line
+  `setPosition(OverlayPosition.TOP_CENTER)` — you can use `TOP_LEFT`,
+  `BOTTOM_RIGHT`, etc.
+- Make it blink instead of staying fixed: in `render()` you can alternate
+  the color based on `System.currentTimeMillis() % 1000 < 500`.
+- Change the idle text or color: `IdleBoxInfoBox.getText()` /
+  `getTextColor()`.

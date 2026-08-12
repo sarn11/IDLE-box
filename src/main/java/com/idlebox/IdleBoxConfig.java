@@ -6,13 +6,15 @@ import net.runelite.client.config.ConfigItem;
 
 import java.awt.Color;
 
-@ConfigGroup("idlebox")
+@ConfigGroup(IdleBoxConfig.GROUP)
 public interface IdleBoxConfig extends Config
 {
+	String GROUP = "idlebox";
+
 	@ConfigItem(
 		keyName = "idleSeconds",
-		name = "Segundos idle",
-		description = "Segundos sin animación, interacción, movimiento ni XP antes de mostrar el indicador",
+		name = "Idle seconds",
+		description = "Seconds without animation, interaction, movement or XP before showing the indicator",
 		position = 1
 	)
 	default int idleSeconds()
@@ -22,8 +24,8 @@ public interface IdleBoxConfig extends Config
 
 	@ConfigItem(
 		keyName = "showOverlaySquare",
-		name = "Mostrar cuadrado",
-		description = "Muestra un cuadrado de color en pantalla mientras estás idle",
+		name = "Show square",
+		description = "Shows a colored square on screen while idle",
 		position = 2
 	)
 	default boolean showOverlaySquare()
@@ -33,8 +35,8 @@ public interface IdleBoxConfig extends Config
 
 	@ConfigItem(
 		keyName = "squareColor",
-		name = "Color del cuadrado",
-		description = "Color del cuadrado que se muestra al estar idle",
+		name = "Square color",
+		description = "Color of the square shown while idle",
 		position = 3
 	)
 	default Color squareColor()
@@ -44,8 +46,8 @@ public interface IdleBoxConfig extends Config
 
 	@ConfigItem(
 		keyName = "squareSize",
-		name = "Tamaño del cuadrado",
-		description = "Lado del cuadrado en píxeles",
+		name = "Square size",
+		description = "Side of the square in pixels",
 		position = 4
 	)
 	default int squareSize()
@@ -55,8 +57,8 @@ public interface IdleBoxConfig extends Config
 
 	@ConfigItem(
 		keyName = "showInfoBox",
-		name = "Mostrar InfoBox",
-		description = "Muestra un InfoBox (icono + texto) mientras estás idle",
+		name = "Show InfoBox",
+		description = "Shows an InfoBox (icon + text) while idle",
 		position = 5
 	)
 	default boolean showInfoBox()

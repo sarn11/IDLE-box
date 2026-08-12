@@ -8,6 +8,7 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.StatChanged;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -23,12 +24,12 @@ import java.util.Map;
 
 @PluginDescriptor(
 	name = "Idle Box",
-	description = "Muestra en pantalla una caja de color y/o un InfoBox cuando el personaje lleva X segundos sin animacion, interaccion, movimiento ni XP",
+	description = "Shows an on-screen colored box and/or an InfoBox when the character has been idle for X seconds without animation, interaction, movement or XP",
 	tags = {"idle", "afk", "indicator", "overlay", "status"}
 )
 public class IdleBoxPlugin extends Plugin
 {
-	// RuneLite corre a 0.6 segundos por game tick
+	// RuneLite runs at 0.6 seconds per game tick
 	private static final double SECONDS_PER_TICK = 0.6;
 
 	@Inject
@@ -49,7 +50,7 @@ public class IdleBoxPlugin extends Plugin
 	private boolean idle = false;
 	private IdleBoxInfoBox infoBox;
 
-	// Ultimo game tick en el que hubo CUALQUIER senal de actividad
+	// Last game tick where ANY activity signal was detected
 	private int lastActivityTick;
 
 	private WorldPoint lastLocation;
@@ -126,7 +127,27 @@ public class IdleBoxPlugin extends Plugin
 		}
 
 		idle = nowIdle;
+		updateInfoBox();
+	}
 
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!IdleBoxConfig.GROUP.equals(event.getGroup()))
+		{
+			return;
+		}
+
+		updateInfoBox();
+	}
+
+	public boolean isIdle()
+	{
+		return idle;
+	}
+
+	private void updateInfoBox()
+	{
 		if (idle && config.showInfoBox())
 		{
 			addInfoBox();
@@ -135,11 +156,6 @@ public class IdleBoxPlugin extends Plugin
 		{
 			removeInfoBox();
 		}
-	}
-
-	public boolean isIdle()
-	{
-		return idle;
 	}
 
 	private void addInfoBox()
@@ -162,7 +178,7 @@ public class IdleBoxPlugin extends Plugin
 		}
 	}
 
-	// Icono generado por codigo, sin depender de recursos externos
+	// Icon generated in code, no external resource dependency
 	private BufferedImage createIcon()
 	{
 		BufferedImage img = new BufferedImage(24, 24, BufferedImage.TYPE_INT_ARGB);
