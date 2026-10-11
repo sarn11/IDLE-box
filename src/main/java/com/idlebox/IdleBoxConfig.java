@@ -23,10 +23,43 @@ public interface IdleBoxConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "ignoreAnimation",
+		name = "Ignore animation",
+		description = "Animations no longer count as activity, so you can be marked idle while animating",
+		position = 2
+	)
+	default boolean ignoreAnimation()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "ignoreInteraction",
+		name = "Ignore interaction",
+		description = "Interacting with an NPC or player no longer counts as activity, so you can be marked idle while interacting",
+		position = 3
+	)
+	default boolean ignoreInteraction()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+		keyName = "ignoreXpGain",
+		name = "Ignore XP gain",
+		description = "Gaining XP no longer counts as activity, so you can be marked idle while gaining XP",
+		position = 4
+	)
+	default boolean ignoreXpGain()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "showOverlaySquare",
 		name = "Show square",
 		description = "Shows a colored square on screen while idle",
-		position = 2
+		position = 5
 	)
 	default boolean showOverlaySquare()
 	{
@@ -37,7 +70,7 @@ public interface IdleBoxConfig extends Config
 		keyName = "squareColor",
 		name = "Square color",
 		description = "Color of the square shown while idle",
-		position = 3
+		position = 6
 	)
 	default Color squareColor()
 	{
@@ -48,7 +81,7 @@ public interface IdleBoxConfig extends Config
 		keyName = "squareSize",
 		name = "Square size",
 		description = "Side of the square in pixels",
-		position = 4
+		position = 7
 	)
 	default int squareSize()
 	{
@@ -59,7 +92,7 @@ public interface IdleBoxConfig extends Config
 		keyName = "showInfoBox",
 		name = "Show InfoBox",
 		description = "Shows an InfoBox (icon + text) while idle",
-		position = 5
+		position = 8
 	)
 	default boolean showInfoBox()
 	{

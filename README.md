@@ -26,6 +26,13 @@ so, that tick is stored as `lastActivityTick`. Once `configured seconds /
 0.6` ticks pass without any signal, the indicator appears. As soon as any
 signal happens again, it disappears.
 
+The Animation, Interaction and XP gained signals can each be turned off
+with the **Ignore animation**, **Ignore interaction** and **Ignore XP gain**
+toggles in the plugin settings. An ignored signal no longer counts as
+activity, so the indicator can appear even while it's happening (e.g. ignore
+animation to get flagged as idle during long skilling actions). All three are
+off by default.
+
 This project follows the official structure of
 [`runelite/example-plugin`](https://github.com/runelite/example-plugin), the
 template recommended by RuneLite's

@@ -101,14 +101,15 @@ public class IdleBoxPlugin extends Plugin
 
 		if (local != null)
 		{
-			boolean animating = local.getAnimation() != -1;
-			boolean interacting = local.getInteracting() != null;
+			boolean animating = !config.ignoreAnimation() && local.getAnimation() != -1;
+			boolean interacting = !config.ignoreInteraction() && local.getInteracting() != null;
+			boolean gainedXp = !config.ignoreXpGain() && xpGainedThisTick;
 
 			WorldPoint currentLocation = local.getWorldLocation();
 			boolean moved = lastLocation != null && !lastLocation.equals(currentLocation);
 			lastLocation = currentLocation;
 
-			activeThisTick = animating || interacting || moved || xpGainedThisTick;
+			activeThisTick = animating || interacting || moved || gainedXp;
 		}
 
 		xpGainedThisTick = false;
