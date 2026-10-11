@@ -101,7 +101,7 @@ public class IdleBoxPlugin extends Plugin
 
 		if (local != null)
 		{
-			boolean animating = !config.ignoreAnimation() && local.getAnimation() != -1;
+			boolean animating = !config.ignoreAnimation() && local.getAnimation() != -1 && local.getAnimation() != 424;
 			boolean interacting = !config.ignoreInteraction() && local.getInteracting() != null;
 			boolean gainedXp = !config.ignoreXpGain() && xpGainedThisTick;
 
